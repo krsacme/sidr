@@ -68,7 +68,8 @@
           bodyAnimation,
           menuAnimation,
           scrollTop,
-          bodyClass = (name === 'sidr' ? 'sidr-open' : 'sidr-open ' + name + '-open');
+          bodyClass = (name === 'sidr' ? 'sidr-open' : 'sidr-open ' + name + '-open'),
+          $menuToggler = $($menu.data('toggler'));
 
       // Open Sidr
       if('open' === action || ('toggle' === action && !$menu.is(':visible'))) {
@@ -115,6 +116,7 @@
           });
         }
         else {
+          $menuToggler.animate(bodyAnimation, speed);
           setTimeout(function() {
             $(this).addClass(bodyClass);
           }, speed);
@@ -157,7 +159,11 @@
           scrollTop = $html.scrollTop();
           $html.removeAttr('style').scrollTop(scrollTop);
         }
-        $body.addClass('sidr-animating').animate(bodyAnimation, speed).removeClass(bodyClass);
+        if (displace) {
+          $body.addClass('sidr-animating').animate(bodyAnimation, speed).removeClass(bodyClass);
+        } else {
+          $menuToggler.animate(bodyAnimation, speed);
+        }
         $menu.animate(menuAnimation, speed, function() {
           $menu.removeAttr('style').hide();
           $body.removeAttr('style');
@@ -215,9 +221,10 @@
       speed         : 200,            // Accepts standard jQuery effects speeds (i.e. fast, normal or milliseconds)
       side          : 'left',         // Accepts 'left' or 'right'
       source        : null,           // Override the source of the content.
+      toggler       : null,           // Menu Toggler element
       renaming      : true,           // The ids and classes will be prepended with a prefix when loading existent content
       body          : 'body',         // Page container selector,
-      displace: true, // Displace the body content or not
+      displace      : false,           // Displace the body content or not
       onOpen        : function() {},  // Callback when sidr opened
       onClose       : function() {}   // Callback when sidr closed
     }, options);
@@ -240,6 +247,7 @@
         speed          : settings.speed,
         side           : settings.side,
         body           : settings.body,
+        toggler        : settings.toggler,
         displace      : settings.displace,
         onOpen         : settings.onOpen,
         onClose        : settings.onClose
